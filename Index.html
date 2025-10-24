@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti, Mi Amor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 25%, #ff9a9e 50%, #fad0c4 75%, #ffd1ff 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Canvas para corazones */
+        #heartsCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Partículas de brillo */
+        .sparkle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            animation: sparkleFloat 3s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes sparkleFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(-100px) scale(1.5);
+                opacity: 1;
+            }
+        }
+
+        /* Contenedor del sobre */
+        #envelopeContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        #envelopeContainer.hidden {
+            animation: fadeOutContainer 1s ease forwards;
+        }
+
+        @keyframes fadeOutContainer {
+            to {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        /* Sobre */
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            animation: envelopeEntrance 1.5s ease-out;
+        }
+
+        @keyframes envelopeEntrance {
+            0% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.1) rotate(-10deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .envelope-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe4e4 100%);
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #ffb3ba;
+            transform-origin: top center;
+            z-index: 10;
+            transition: transform 1s ease;
+        }
+
+        .envelope.opening .envelope-flap {
+            animation: openFlap 1.5s ease forwards;
+        }
+
+        @keyframes openFlap {
+            0% {
+                transform: rotateX(0deg);
+            }
+            100% {
+                transform: rotateX(-180deg);
+            }
+        }
+
+        /* Carta dentro del sobre */
+        .letter {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            height: 350px;
+            background: linear-gradient(135deg, #ffffff 0%, #fff9f9 100%);
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 15;
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .envelope.opening .letter {
+            animation: letterExit 2s ease 1s forwards;
+        }
+
+        @keyframes letterExit {
+            0% {
+                top: 20px;
+                opacity: 0;
+                transform: translateX(-50%) scale(0.8);
+            }
+            50% {
+                top: -150px;
+                opacity: 1;
+                transform: translateX(-50%) scale(1.1) rotateZ(5deg);
+            }
+            100% {
+                top: -200px;
+                opacity: 1;
+                transform: translateX(-50%) scale(1.2) rotateZ(0deg);
+            }
+        }
+
+        .letter-text {
+            font-family: 'Great Vibes', cursive;
+            font-size: 28px;
+            color: #ff6b9d;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.4;
+        }
+
+        .letter-name {
+            font-size: 22px;
+            margin-top: 10px;
+        }
+
+        /* Partículas de explosión */
+        .particle {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #ff6b9d, #ffd1ff);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999;
+            box-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+        }
+
+        /* Contenedor principal */
+        #mainContent {
+            position: relative;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #mainContent.visible {
+            animation: fadeInContent 2s ease forwards;
+            pointer-events: all;
+        }
+
+        @keyframes fadeInContent {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Título principal "Te amo" */
+        .main-title {
+            text-align: center;
+            padding: 100px 20px 50px;
+            position: relative;
+        }
+
+        .main-title h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 120px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 107, 157, 0.8),
+                         0 0 40px rgba(255, 107, 157, 0.6),
+                         4px 4px 8px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: scale(0.5) rotateY(90deg);
+            animation: titleEntrance 2s ease 0.5s forwards;
+        }
+
+        @keyframes titleEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotateY(90deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1) rotateY(0deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateY(0deg);
+            }
+        }
+
+        /* Sección de razones */
+        .reasons-section {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .reasons-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 48px;
+            text-align: center;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 2.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cada razón */
+        .reason {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateX(-100px) rotate(-5deg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reason::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 107, 157, 0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .reason.show {
+            animation: reasonEntrance 1s ease forwards;
+        }
+
+        @keyframes reasonEntrance {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px) rotate(-5deg) scale(0.8);
+            }
+            60% {
+                opacity: 1;
+                transform: translateX(10px) rotate(2deg) scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotate(0deg) scale(1);
+            }
+        }
+
+        .reason-number {
+            font-family: 'Great Vibes', cursive;
+            font-size: 36px;
+            color: #ff6b9d;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .reason-text {
+            font-size: 20px;
+            color: #333;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* <CHANGE> Añadido: Estilos para aviones de papel con pancartas */
+        .paper-plane-container {
+            position: fixed;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .paper-plane {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            transform-style: preserve-3d;
+        }
+
+        /* Cuerpo del avión de papel */
+        .plane-body {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 60px solid #fff;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            animation: planeTilt 2s ease-in-out infinite;
+        }
+
+        @keyframes planeTilt {
+            0%, 100% {
+                transform: rotateZ(0deg) rotateY(0deg);
+            }
+            50% {
+                transform: rotateZ(-5deg) rotateY(10deg);
+            }
+        }
+
+        /* Alas del avión */
+        .plane-wing-left {
+            position: absolute;
+            top: 20px;
+            left: -25px;
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-right: 30px solid #f0f0f0;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .plane-wing-right {
+            position: absolute;
+            top: 20px;
+            right: -25px;
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-left: 30px solid #f0f0f0;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Pancarta que cuelga del avión */
+        .banner {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffa8c5 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+            animation: bannerSway 2s ease-in-out infinite;
+        }
+
+        @keyframes bannerSway {
+            0%, 100% {
+                transform: translateX(-50%) rotate(-2deg);
+            }
+            50% {
+                transform: translateX(-50%) rotate(2deg);
+            }
+        }
+
+        /* Cuerda de la pancarta */
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Animación de vuelo */
+        @keyframes flyAcross {
+            0% {
+                left: -150px;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                left: calc(100% + 150px);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title h1 {
+                font-size: 80px;
+            }
+
+            .reasons-title {
+                font-size: 36px;
+            }
+
+            .reason {
+                padding: 30px 20px;
+            }
+
+            .reason-text {
+                font-size: 18px;
+            }
+
+            .envelope {
+                width: 250px;
+                height: 166px;
+            }
+
+            .envelope-flap {
+                border-left: 125px solid transparent;
+                border-right: 125px solid transparent;
+                border-top: 83px solid #ffb3ba;
+            }
+
+            .letter {
+                width: 200px;
+                height: 280px;
+                padding: 20px;
+            }
+
+            .letter-text {
+                font-size: 22px;
+            }
+
+            .letter-name {
+                font-size: 18px;
+            }
+
+            /* <CHANGE> Aviones más pequeños en móvil */
+            .paper-plane {
+                width: 40px;
+                height: 40px;
+            }
+
+            .plane-body {
+                border-left: 20px solid transparent;
+                border-right: 20px solid transparent;
+                border-bottom: 40px solid #fff;
+            }
+
+            .plane-wing-left {
+                left: -18px;
+                border-right: 20px solid #f0f0f0;
+            }
+
+            .plane-wing-right {
+                right: -18px;
+                border-left: 20px solid #f0f0f0;
+            }
+
+            .banner {
+                font-size: 11px;
+                padding: 6px 15px;
+                top: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas para corazones flotantes -->
+    <canvas id="heartsCanvas"></canvas>
+
+    <!-- Contenedor del sobre (animación inicial) -->
+    <div id="envelopeContainer">
+        <div class="envelope" id="envelope">
+            <div class="envelope-body"></div>
+            <div class="envelope-flap"></div>
+            <div class="letter">
+                <!-- PERSONALIZACIÓN: Cambia el nombre aquí -->
+                <div class="letter-text">
+                    Para ti<br>
+                    <span class="letter-name">Fernanda Belén<br>Guevara Rivas</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div id="mainContent">
+        <!-- Título principal -->
+        <div class="main-title">
+            <!-- PERSONALIZACIÓN: Cambia el mensaje principal aquí -->
+            <h1>Love u mi niña</h1>
+        </div>
+
+        <!-- Sección de razones -->
+        <div class="reasons-section">
+            <!-- PERSONALIZACIÓN: Cambia el título de la sección aquí -->
+            <h2 class="reasons-title">5 razones por las que eres la niña perfecta para mí</h2>
+
+            <!-- PERSONALIZACIÓN: Cambia cada razón aquí -->
+            <div class="reason" data-delay="3000">
+    <div class="reason-number">Razón #1</div>
+    <div class="reason-text">
+        Tu sonrisa ilumina mis días más oscuros y hace que cada momento a tu lado sea mágico. 
+        Hay algo en esa forma en que sonríes que logra calmar todo dentro de mí, como si el mundo se detuviera solo para verte. 
+        En los días más difíciles, cuando las cosas no salen bien, basta con imaginar tu sonrisa para que todo vuelva a tener sentido. 
+        Es una luz que no se apaga, una energía tan pura que me recuerda por qué te elegí y por qué sigo haciéndolo cada día. 
+        Esa sonrisa tuya es mi refugio, mi motivo y mi fuerza, incluso cuando no estás cerca.
+    </div>
+</div>
+
+<div class="reason" data-delay="5000">
+    <div class="reason-number">Razón #2</div>
+    <div class="reason-text">
+        Tu forma de ser tan auténtica y genuina me hace sentir que puedo ser yo mismo contigo. 
+        No tengo que aparentar nada, no tengo que esconder mis pensamientos ni mis emociones, porque contigo todo fluye. 
+        Eres esa persona con la que puedo hablar de todo, reír hasta que duela el estómago, o simplemente quedarme en silencio y aun así sentirme en paz. 
+        Admiro profundamente lo real que eres, cómo no finges para agradar a nadie, y cómo tu esencia siempre brilla. 
+        Estar contigo me enseñó que el amor no necesita máscaras, solo verdad, comprensión y esa complicidad que solo nosotros entendemos.
+    </div>
+</div>
+
+<div class="reason" data-delay="7000">
+    <div class="reason-number">Razón #3</div>
+    <div class="reason-text">
+        Cada conversación contigo es una aventura; me haces reír y pensar al mismo tiempo. 
+        Tienes esa capacidad de cambiar mi estado de ánimo con solo unas palabras, de hacerme ver la vida desde otra perspectiva, 
+        y de recordarme que las cosas más simples pueden ser las más bonitas. 
+        Me encanta cuando hablamos sin parar, cuando nos contamos todo, o incluso cuando discutimos, 
+        porque incluso en esos momentos aprendo algo nuevo de ti y de nosotros. 
+        Cada palabra tuya deja una huella en mí, y cada silencio compartido tiene un significado más profundo de lo que cualquiera podría entender. 
+        Eres mi mejor conversación, la más sincera y la que nunca quiero que termine.
+    </div>
+</div>
+
+<div class="reason" data-delay="9000">
+    <div class="reason-number">Razón #4</div>
+    <div class="reason-text">
+        Tu corazón bondadoso y tu manera de cuidar a los demás me inspiran a ser mejor persona. 
+        No solo por lo que haces, sino por cómo lo haces: con cariño, con empatía, con una dulzura que me desarma. 
+        Tienes una forma tan hermosa de entregar amor, sin pedir nada a cambio, que me hace creer en la bondad verdadera. 
+        Me conmueve verte preocuparte por quienes quieres, por tus amigos, tu familia, e incluso por mí, 
+        en esos momentos donde más lo necesito y menos lo digo. 
+        Gracias por enseñarme que amar también es cuidar, escuchar, comprender y seguir ahí, incluso cuando hay tropiezos. 
+        A veces discutimos, sí, pero siempre encontramos el camino de vuelta, y eso solo lo logra alguien que ama de verdad.
+    </div>
+</div>
+
+<div class="reason" data-delay="11000">
+    <div class="reason-number">Razón #5</div>
+    <div class="reason-text">
+        Simplemente eres tú, perfecta en tu imperfección, y no cambiaría nada de ti. 
+        No necesito que seas alguien diferente, porque en ti encontré todo lo que siempre quise y más. 
+        Amo tus virtudes, tus risas espontáneas, tus gestos, tus enojos, tus ocurrencias, 
+        y hasta esos pequeños detalles que solo yo conozco y que hacen que me enamore aún más cada día. 
+        Aunque no nos veamos seguido, aunque a veces la distancia o el tiempo nos jueguen en contra, 
+        quiero que sepas que mi amor por ti no disminuye, al contrario, crece. 
+        Pienso en ti a diario, en cada cosa que hago, en cada lugar que visito, en cada canción que escucho. 
+        Y aunque el mundo cambie mil veces, mi sentimiento por ti sigue siendo el mismo: sincero, constante y lleno de amor. 
+        Porque lo nuestro no depende de la distancia ni del momento, sino del lazo que creamos y que nada podrá romper.
+    </div>
+</div>
+
+        </div>
+    </div>
+
+    <script>
+        // ===== ANIMACIÓN DEL SOBRE =====
+        const envelope = document.getElementById('envelope');
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        const mainContent = document.getElementById('mainContent');
+
+        // Abrir sobre después de 2 segundos
+        setTimeout(() => {
+            envelope.classList.add('opening');
+        }, 2000);
+
+        // Crear partículas de explosión
+        setTimeout(() => {
+            createExplosion();
+        }, 4500);
+
+        // Ocultar sobre y mostrar contenido principal
+        setTimeout(() => {
+            envelopeContainer.classList.add('hidden');
+            mainContent.classList.add('visible');
+            startReasonAnimations();
+        }, 6000);
+
+        function createExplosion() {
+            const colors = ['#ff6b9d', '#ffd1ff', '#ffb3ba', '#ffc8dd', '#fff5f7'];
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = '50%';
+                particle.style.top = '40%';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                const angle = (Math.PI * 2 * i) / 50;
+                const velocity = 100 + Math.random() * 200;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+                
+                particle.style.animation = `explode 2s ease-out forwards`;
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        // Añadir animación de explosión
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes explode {
+                0% {
+                    transform: translate(0, 0) scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(var(--tx), var(--ty)) scale(0);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ===== ANIMACIÓN DE RAZONES =====
+        function startReasonAnimations() {
+            const reasons = document.querySelectorAll('.reason');
+            reasons.forEach(reason => {
+                const delay = parseInt(reason.dataset.delay);
+                setTimeout(() => {
+                    reason.classList.add('show');
+                }, delay);
+            });
+        }
+
+        // ===== CANVAS DE CORAZONES =====
+        const canvas = document.getElementById('heartsCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const hearts = [];
+
+        class Heart {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 50;
+                this.size = Math.random() * 20 + 10;
+                this.speedY = Math.random() * 1 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#ff6b9d';
+                ctx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                ctx.moveTo(this.x, this.y + topCurveHeight);
+                ctx.bezierCurveTo(
+                    this.x, this.y,
+                    this.x - this.size / 2, this.y,
+                    this.x - this.size / 2, this.y + topCurveHeight
+                );
+                ctx.bezierCurveTo(
+                    this.x - this.size / 2, this.y + (this.size + topCurveHeight) / 2,
+                    this.x, this.y + (this.size + topCurveHeight) / 1.2,
+                    this.x, this.y + this.size + topCurveHeight
+                );
+                ctx.bezierCurveTo(
+                    this.x, this.y + (this.size + topCurveHeight) / 1.2,
+                    this.x + this.size / 2, this.y + (this.size + topCurveHeight) / 2,
+                    this.x + this.size / 2, this.y + topCurveHeight
+                );
+                ctx.bezierCurveTo(
+                    this.x + this.size / 2, this.y,
+                    this.x, this.y,
+                    this.x, this.y + topCurveHeight
+                );
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                this.draw();
+
+                if (this.y < -50) {
+                    this.y = canvas.height + 50;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+        }
+
+        for (let i = 0; i < 30; i++) {
+            hearts.push(new Heart());
+        }
+
+        function animateHearts() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(heart => heart.update());
+            requestAnimationFrame(animateHearts);
+        }
+
+        animateHearts();
+
+        // ===== PARTÍCULAS DE BRILLO =====
+        function createSparkles() {
+            for (let i = 0; i < 20; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(sparkle);
+            }
+        }
+
+        createSparkles();
+
+        // <CHANGE> Añadido: Sistema de aviones de papel con pancartas
+        // PERSONALIZACIÓN: Mensajes que llevarán los aviones
+        const planeMessages = [
+            'Te amo ❤️',
+            'Te quiero',
+            'Eres el amor de mi vida',
+            'Eres mi todo',
+            'Mi amor eterno',
+            'Siempre juntos',
+            'Eres perfecta'
+        ];
+
+        function createPaperPlane() {
+            const container = document.createElement('div');
+            container.className = 'paper-plane-container';
+            
+            // Posición vertical aleatoria
+            const topPosition = Math.random() * 60 + 20; // Entre 20% y 80%
+            container.style.top = topPosition + '%';
+            
+            // Duración de la animación (15 segundos)
+            const duration = 15;
+            container.style.animation = `flyAcross ${duration}s linear forwards`;
+            
+            // Crear el avión
+            const plane = document.createElement('div');
+            plane.className = 'paper-plane';
+            
+            const planeBody = document.createElement('div');
+            planeBody.className = 'plane-body';
+            
+            const wingLeft = document.createElement('div');
+            wingLeft.className = 'plane-wing-left';
+            
+            const wingRight = document.createElement('div');
+            wingRight.className = 'plane-wing-right';
+            
+            // Crear la pancarta con mensaje aleatorio
+            const banner = document.createElement('div');
+            banner.className = 'banner';
+            banner.textContent = planeMessages[Math.floor(Math.random() * planeMessages.length)];
+            
+            plane.appendChild(planeBody);
+            plane.appendChild(wingLeft);
+            plane.appendChild(wingRight);
+            plane.appendChild(banner);
+            container.appendChild(plane);
+            
+            document.body.appendChild(container);
+            
+            // Eliminar el avión después de que termine la animación
+            setTimeout(() => {
+                container.remove();
+            }, duration * 1000);
+        }
+
+        // Función para lanzar múltiples aviones
+        function launchPlanes() {
+            const numberOfPlanes = Math.floor(Math.random() * 2) + 3; // 3 o 4 aviones
+            
+            for (let i = 0; i < numberOfPlanes; i++) {
+                setTimeout(() => {
+                    createPaperPlane();
+                }, i * 2000); // Separar cada avión por 2 segundos
+            }
+        }
+
+        // Iniciar los aviones después de que aparezca el contenido principal
+        setTimeout(() => {
+            launchPlanes(); // Primera tanda
+            setInterval(launchPlanes, 50000); // Cada 50 segundos
+        }, 8000); // Esperar 8 segundos después de que aparezca el contenido
+
+        // Redimensionar canvas
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
