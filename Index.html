@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Ti, Mi Amor</title>
+    <title>5 Razones - Para Ti, Mi Amor</title>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -221,6 +221,8 @@
             z-index: 10;
             opacity: 0;
             pointer-events: none;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
         }
 
         #mainContent.visible {
@@ -366,7 +368,7 @@
             z-index: 1;
         }
 
-        /* <CHANGE> Añadido: Estilos para aviones de papel con pancartas */
+        /* Añadido: Estilos para aviones de papel con pancartas */
         .paper-plane-container {
             position: fixed;
             z-index: 5;
@@ -483,8 +485,139 @@
             }
         }
 
+        /* Añadido: Estilos para sidebar y navegación */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(255, 107, 157, 0.95) 0%, rgba(255, 182, 193, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            z-index: 100;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar-date {
+            font-family: 'Great Vibes', cursive;
+            font-size: 32px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 5px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 15px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(5px);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-link.active {
+            background: white;
+            color: #ff6b9d;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Botón hamburguesa para móvil */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 101;
+            background: linear-gradient(135deg, #ff6b9d, #ffa8c5);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .menu-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 5px auto;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            #mainContent {
+                margin-left: 0;
+            }
+
             .main-title h1 {
                 font-size: 80px;
             }
@@ -526,7 +659,6 @@
                 font-size: 18px;
             }
 
-            /* <CHANGE> Aviones más pequeños en móvil */
             .paper-plane {
                 width: 40px;
                 height: 40px;
@@ -557,6 +689,34 @@
     </style>
 </head>
 <body>
+    <!-- Añadido: Botón hamburguesa para móvil -->
+    <button class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Añadido: Sidebar con navegación -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-date">23</div>
+            <div class="sidebar-subtitle">de cada mes</div>
+        </div>
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link active">Las 5 razones por las que te amo</a>
+                </li>
+                <li class="nav-item">
+                    <a href="love1.html" class="nav-link">La fecha en que nos hicimos novios</a>
+                </li>
+                <li class="nav-item">
+                    <a href="love2.html" class="nav-link">100 cosas que amo de ti</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
     <!-- Canvas para corazones flotantes -->
     <canvas id="heartsCanvas"></canvas>
 
@@ -566,7 +726,6 @@
             <div class="envelope-body"></div>
             <div class="envelope-flap"></div>
             <div class="letter">
-                <!-- PERSONALIZACIÓN: Cambia el nombre aquí -->
                 <div class="letter-text">
                     Para ti<br>
                     <span class="letter-name">Fernanda Belén<br>Guevara Rivas</span>
@@ -577,79 +736,71 @@
 
     <!-- Contenido principal -->
     <div id="mainContent">
-        <!-- Título principal -->
         <div class="main-title">
-            <!-- PERSONALIZACIÓN: Cambia el mensaje principal aquí -->
-            <h1>Love u mi niña</h1>
+            <h1>Te amo</h1>
         </div>
 
-        <!-- Sección de razones -->
         <div class="reasons-section">
-            <!-- PERSONALIZACIÓN: Cambia el título de la sección aquí -->
             <h2 class="reasons-title">5 razones por las que eres la niña perfecta para mí</h2>
 
-            <!-- PERSONALIZACIÓN: Cambia cada razón aquí -->
-            <div class="reason" data-delay="3000">
-    <div class="reason-number">Razón #1</div>
-    <div class="reason-text">
-        Tu sonrisa ilumina mis días más oscuros y hace que cada momento a tu lado sea mágico. 
-        Hay algo en esa forma en que sonríes que logra calmar todo dentro de mí, como si el mundo se detuviera solo para verte. 
-        En los días más difíciles, cuando las cosas no salen bien, basta con imaginar tu sonrisa para que todo vuelva a tener sentido. 
-        Es una luz que no se apaga, una energía tan pura que me recuerda por qué te elegí y por qué sigo haciéndolo cada día. 
-        Esa sonrisa tuya es mi refugio, mi motivo y mi fuerza, incluso cuando no estás cerca.
-    </div>
+           <div class="reason" data-delay="3000">
+  <div class="reason-number">Razón #1</div>
+  <div class="reason-text">
+    Tu sonrisa ilumina mis días más oscuros y hace que cada momento a tu lado sea mágico.  
+    No importa cuán difícil haya sido mi día, con solo verte sonreír todo se vuelve ligero, cálido y hermoso.  
+    Tu sonrisa tiene ese poder de detener el tiempo, de llenar todo de calma y alegría, de recordarme que las cosas más simples pueden ser las más perfectas.  
+    Me enseñaste que la felicidad no está en los lugares, sino en las personas que la hacen brillar.  
+    Y tú, amor mío, eres la razón por la que mi mundo tiene luz.
+  </div>
 </div>
 
 <div class="reason" data-delay="5000">
-    <div class="reason-number">Razón #2</div>
-    <div class="reason-text">
-        Tu forma de ser tan auténtica y genuina me hace sentir que puedo ser yo mismo contigo. 
-        No tengo que aparentar nada, no tengo que esconder mis pensamientos ni mis emociones, porque contigo todo fluye. 
-        Eres esa persona con la que puedo hablar de todo, reír hasta que duela el estómago, o simplemente quedarme en silencio y aun así sentirme en paz. 
-        Admiro profundamente lo real que eres, cómo no finges para agradar a nadie, y cómo tu esencia siempre brilla. 
-        Estar contigo me enseñó que el amor no necesita máscaras, solo verdad, comprensión y esa complicidad que solo nosotros entendemos.
-    </div>
+  <div class="reason-number">Razón #2</div>
+  <div class="reason-text">
+    Tu forma de ser tan auténtica y genuina me hace sentir que puedo ser yo mismo contigo.  
+    No necesito fingir, no tengo que ocultar mis miedos ni mis pensamientos.  
+    Contigo puedo ser quien realmente soy, sin máscaras ni apariencias.  
+    Me haces sentir que ser imperfecto está bien, que el amor verdadero no busca cambiar, sino comprender.  
+    En un mundo lleno de apariencias, tú eres mi verdad, y eso vale más que todo.  
+    Tu sinceridad me inspira, tu manera de hablarme me calma, y tu presencia me da paz.
+  </div>
 </div>
 
 <div class="reason" data-delay="7000">
-    <div class="reason-number">Razón #3</div>
-    <div class="reason-text">
-        Cada conversación contigo es una aventura; me haces reír y pensar al mismo tiempo. 
-        Tienes esa capacidad de cambiar mi estado de ánimo con solo unas palabras, de hacerme ver la vida desde otra perspectiva, 
-        y de recordarme que las cosas más simples pueden ser las más bonitas. 
-        Me encanta cuando hablamos sin parar, cuando nos contamos todo, o incluso cuando discutimos, 
-        porque incluso en esos momentos aprendo algo nuevo de ti y de nosotros. 
-        Cada palabra tuya deja una huella en mí, y cada silencio compartido tiene un significado más profundo de lo que cualquiera podría entender. 
-        Eres mi mejor conversación, la más sincera y la que nunca quiero que termine.
-    </div>
+  <div class="reason-number">Razón #3</div>
+  <div class="reason-text">
+    Cada conversación contigo es una aventura; me haces reír, pensar, y sentir que cada palabra vale la pena.  
+    A veces hablamos por horas, otras solo bastan unos segundos, pero en todas esas veces siento que me acerco más a ti.  
+    Adoro cuando me cuentas tus sueños, cuando me haces ver la vida desde tu mirada tan especial.  
+    Incluso en el silencio, hay una conexión entre nosotros que no necesita palabras.  
+    Has convertido mis días comunes en momentos extraordinarios, solo por estar en ellos.  
+    Hablar contigo es como volver a casa: siempre me siento en paz.
+  </div>
 </div>
 
 <div class="reason" data-delay="9000">
-    <div class="reason-number">Razón #4</div>
-    <div class="reason-text">
-        Tu corazón bondadoso y tu manera de cuidar a los demás me inspiran a ser mejor persona. 
-        No solo por lo que haces, sino por cómo lo haces: con cariño, con empatía, con una dulzura que me desarma. 
-        Tienes una forma tan hermosa de entregar amor, sin pedir nada a cambio, que me hace creer en la bondad verdadera. 
-        Me conmueve verte preocuparte por quienes quieres, por tus amigos, tu familia, e incluso por mí, 
-        en esos momentos donde más lo necesito y menos lo digo. 
-        Gracias por enseñarme que amar también es cuidar, escuchar, comprender y seguir ahí, incluso cuando hay tropiezos. 
-        A veces discutimos, sí, pero siempre encontramos el camino de vuelta, y eso solo lo logra alguien que ama de verdad.
-    </div>
+  <div class="reason-number">Razón #4</div>
+  <div class="reason-text">
+    Tu corazón bondadoso y tu manera de cuidar a los demás me inspiran a ser mejor persona cada día.  
+    Me enamora cómo te preocupas por los que quieres, cómo escuchas con atención, cómo das sin esperar nada a cambio.  
+    Esa ternura tuya no es debilidad, es fuerza pura, es el tipo de amor que hace falta en el mundo.  
+    Me haces creer en lo bueno, en la esperanza, en el poder de los gestos simples.  
+    Gracias a ti, aprendí que amar también es cuidar, respetar, y acompañar en silencio cuando hace falta.  
+    Y te prometo que siempre voy a querer cuidar de ti con la misma ternura con la que tú cuidas de todos.
+  </div>
 </div>
 
 <div class="reason" data-delay="11000">
-    <div class="reason-number">Razón #5</div>
-    <div class="reason-text">
-        Simplemente eres tú, perfecta en tu imperfección, y no cambiaría nada de ti. 
-        No necesito que seas alguien diferente, porque en ti encontré todo lo que siempre quise y más. 
-        Amo tus virtudes, tus risas espontáneas, tus gestos, tus enojos, tus ocurrencias, 
-        y hasta esos pequeños detalles que solo yo conozco y que hacen que me enamore aún más cada día. 
-        Aunque no nos veamos seguido, aunque a veces la distancia o el tiempo nos jueguen en contra, 
-        quiero que sepas que mi amor por ti no disminuye, al contrario, crece. 
-        Pienso en ti a diario, en cada cosa que hago, en cada lugar que visito, en cada canción que escucho. 
-        Y aunque el mundo cambie mil veces, mi sentimiento por ti sigue siendo el mismo: sincero, constante y lleno de amor. 
-        Porque lo nuestro no depende de la distancia ni del momento, sino del lazo que creamos y que nada podrá romper.
-    </div>
+  <div class="reason-number">Razón #5</div>
+  <div class="reason-text">
+    Simplemente eres tú, perfecta en tu imperfección, y no cambiaría nada de ti.  
+    No necesito que seas diferente, porque en ti encontré todo lo que siempre busqué y más.  
+    Amo tus virtudes, tus risas espontáneas, tus enojos, tus ocurrencias, y cada detalle que te hace única.  
+    Aunque a veces no nos veamos seguido, aunque la distancia o el tiempo intenten jugar en contra, mi amor por ti no se detiene; al contrario, crece.  
+    Pienso en ti en cada cosa que hago, en cada canción, en cada atardecer.  
+    Eres el pensamiento que me acompaña incluso cuando no estás.  
+    Y aunque el mundo cambie mil veces, mi amor por ti siempre seguirá siendo el mismo: sincero, constante y eterno.
+  </div>
 </div>
 
         </div>
@@ -817,7 +968,7 @@
 
         createSparkles();
 
-        // <CHANGE> Añadido: Sistema de aviones de papel con pancartas
+        // Añadido: Sistema de aviones de papel con pancartas
         // PERSONALIZACIÓN: Mensajes que llevarán los aviones
         const planeMessages = [
             'Te amo ❤️',
@@ -894,6 +1045,24 @@
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+        });
+
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            menuToggle.classList.toggle('active');
+        });
+
+        // Cerrar sidebar al hacer clic fuera en móvil
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                    menuToggle.classList.remove('active');
+                }
+            }
         });
     </script>
 </body>
